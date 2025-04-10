@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import os
 
 
-from point import IPT430M_REAL_POINTS, DS4025FT_REAL_POINTS
-
 # 載入資料
 IPT430M_PIXEL_POINTS = np.load(
     os.path.join(
@@ -20,6 +18,34 @@ IPT430M_PREDICT_POINTS = np.load(
     )
 )
 
+
+IPT430M_REAL_POINTS = np.array([
+    [5.6, 10.7],
+    [6.7, 9.28],
+    [7.68, 8.0],
+    [8.7, 6.9],
+    [9.78, 6.0],
+    [11.1, 4.8],
+    [3.8, 7.5],
+    [4.7, 6.6],
+    [5.5, 5.7],
+    [6.3, 4.8],
+    [7.1, 4.1],
+    [7.9, 3.1],
+    [2.7, 5.78],
+    [3.5, 5.0],
+    [4.1, 4.2],
+    [4.8, 3.6],
+    [5.5, 2.8],
+    [6.2, 2.0],
+    [2.0, 4.3],
+    [2.68, 3.7],
+    [3.2, 3.1],
+    [3.78, 2.6],
+    [4.4, 2.0],
+    [4.88, 1.25],
+])
+
 DS4025FT_PIXEL_POINTS = np.load(
     os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
@@ -33,6 +59,36 @@ DS4025FT_PREDICT_POINTS = np.load(
         f"../data/thermal_DS4025FT_world_points.npy",
     )
 )
+
+DS4025FT_REAL_POINTS = np.array([
+    [8.8, 8.3],
+    [9.0, 7.7],
+    [9.2, 7.1],
+    [9.4, 6.5],
+    [9.6, 5.9],
+    [9.8, 5.2],
+    [7.18, 7.7],
+    [7.2, 7.1],
+    [7.4, 6.6],
+    [7.5, 6.0],
+    [7.6, 5.5],
+    [7.8, 5.0],
+    [5.7, 7.3],
+    [5.8, 6.78],
+    [5.9, 6.2],
+    [6.1, 5.8],
+    [6.2, 5.2],
+    [6.4, 4.8],
+    [4.6, 6.9],
+    [4.7, 6.4],
+    [4.8, 5.9],
+    [4.9, 5.5],
+    [5.0, 5.1],
+    [5.1, 4.68]
+])
+
+
+
 
 
 def compare_points(real_points, predict_poits, real_points_name="real", predict_poits_name="predict", title="Compare Points"):
