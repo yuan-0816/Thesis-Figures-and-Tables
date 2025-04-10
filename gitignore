@@ -1,7 +1,10 @@
 *.vscode
 *.idea
 *.venv
+
 __pycache__/
+*.pyc
+*.pyo
 
 
 # Repo-specific GitIgnore 
