@@ -208,14 +208,162 @@ def UWB_to_pixel(device="IPT430M"):
     plt.show()
 
 
+
+import cv2
+import glob
+
+
+
+
+class CalibrationData():
+    def __init__(self, device, exp_num=1):
+        self.device = device
+        self.calibration_data = None
+        self.calibration_data_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            f"../data/calibration_data/{device}/exp{str(exp_num)}/calibration_data.npz",
+        )
+        self.calibration_data = np.load(self.calibration_data_path, allow_pickle=True)
+        self.obj_points = self.calibration_data['obj_points']
+        self.img_points = self.calibration_data['img_points']
+        self.camera_matrix = self.calibration_data['camera_matrix']
+        self.dist_coeffs = self.calibration_data['dist_coeffs']
+        self.rvecs = self.calibration_data['rvecs']
+        self.tvecs = self.calibration_data['tvecs']
+
+        if 'ret' in self.calibration_data:
+            self.ret = self.calibration_data['ret']
+        else:
+            # 如果沒有 ret，則設置為 None 或其他適當的值
+            self.ret = None
+
+    def MeanReprojectionError(self):
+        '''
+        計算重投影誤差的平均值, opencv ret 的回傳值
+        '''
+        mean_error = 0
+        for i in range(len(self.obj_points)):
+            reprojected_points, _ = cv2.projectPoints(
+                self.obj_points[i], 
+                self.rvecs[i], 
+                self.tvecs[i], 
+                self.camera_matrix, 
+                self.dist_coeffs
+            )
+            error = cv2.norm(
+                self.img_points[i], 
+                reprojected_points, 
+                cv2.NORM_L2
+            )/len(reprojected_points)
+
+            mean_error += error*error
+
+        print( "total error: {}".format(np.sqrt(mean_error/len(self.obj_points)*len(self.obj_points[0]))))
+        print(f"origin ret: {self.ret}")
+
+
+        return mean_error
+    
+
+    def MeanReprojectionError2(self):
+        '''
+        計算重投影誤差的平均值, opencv 官網範例
+        '''
+        mean_error = 0
+        # all_dist = 0
+        for i in range(len(self.obj_points)):
+            reprojected_points, _ = cv2.projectPoints(
+                self.obj_points[i], 
+                self.rvecs[i], 
+                self.tvecs[i], 
+                self.camera_matrix, 
+                self.dist_coeffs
+            )
+            error = cv2.norm(self.img_points[i], reprojected_points, cv2.NORM_L2) / len(self.obj_points[i])
+            mean_error += error
+            # all_dist += cv2.norm(self.img_points[i], reprojected_points, cv2.NORM_L2)
+
+        # print(f"Total reprojection error: {all_dist/len(self.obj_points)/len(self.obj_points[0])}")
+        print(f"Mean reprojection error: {mean_error/len(self.obj_points)}")
+
+
+
+    # def MeanSquaredError(self):
+    #     # 計算每張圖的 MSE
+    #     all_mse = []
+    #     for i in range(len(self.obj_points)):
+    #         projected_points, _ = cv2.projectPoints(
+    #             self.obj_points[i], 
+    #             self.rvecs[i], 
+    #             self.tvecs[i], 
+    #             self.camera_matrix, 
+    #             self.dist_coeffs
+    #         )
+    #         projected_points = projected_points.squeeze()
+    #         img_pts = self.img_points[i].squeeze()
+
+    #         mse = np.mean(np.sum((projected_points - img_pts)**2, axis=1))
+    #         all_mse.append(mse)
+    #         # print(f"Image {i+1} MSE: {mse:.4f}")
+
+    #     overall_mse = np.mean(all_mse)
+    #     # print(f"\n📌 Overall average MSE: {overall_mse:.4f}")
+    #     print(f"\n📌 Overall average MSE: {overall_mse}")
+    #     return overall_mse
+
+
+    # def MaximumRelativeError(self):
+    #     # 計算每張圖的 MRE
+    #     all_mre = []
+    #     for i in range(len(self.obj_points)):
+    #         # 使用相機參數將 3D 世界座標投影為 2D 圖像點
+    #         projected_points, _ = cv2.projectPoints(
+    #             self.obj_points[i], 
+    #             self.rvecs[i], 
+    #             self.tvecs[i], 
+    #             self.camera_matrix, 
+    #             self.dist_coeffs
+    #         )
+    #         projected_points = projected_points.squeeze()
+    #         img_pts = self.img_points[i].squeeze()
+
+    #         # 計算每個點的相對誤差（相對誤差 = |預測點 - 實際點| / |實際點|）
+    #         relative_errors = np.linalg.norm(projected_points - img_pts, axis=1) / np.linalg.norm(img_pts, axis=1)
+
+    #         # 找出最大的相對誤差（MRE）
+    #         mre = np.max(relative_errors)
+    #         all_mre.append(mre)
+    #         # print(f"Image {i+1} MRE: {mre:.4f}")
+
+    #     # 計算所有圖片的平均 MRE
+    #     overall_mre = np.mean(all_mre)
+    #     max_mre = np.max(all_mre)
+    #     print(f"\n📌 Overall average MRE: {overall_mre}")
+    #     print(f"\n📌 Overall max MRE: {max_mre}")
+
+
+
+
+
+
+
 def main():
-    compare_points(
-        IPT430M_REAL_POINTS,
-        IPT430M_PREDICT_POINTS,
-        real_points_name="real",
-        predict_poits_name="predict",
-        title="IPT430M Compare Points",
-    )
+    # compare_points(
+    #     IPT430M_REAL_POINTS,
+    #     IPT430M_PREDICT_POINTS,
+    #     real_points_name="real",
+    #     predict_poits_name="predict",
+    #     title="IPT430M Compare Points",
+    # )
+
+    coin1 = CalibrationData("coin417rg2", exp_num=1)
+    coin1.MeanReprojectionError()
+    coin2 = CalibrationData("coin417rg2", exp_num=2)
+    coin2.MeanReprojectionError()
+    coin3 = CalibrationData("coin417rg2", exp_num=3)
+    coin3.MeanReprojectionError()
+
+
 
 
 if __name__ == "__main__":
