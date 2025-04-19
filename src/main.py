@@ -258,8 +258,8 @@ class CalibrationData():
 
             mean_error += error*error
 
-        print( "total error: {}".format(np.sqrt(mean_error/len(self.obj_points)*len(self.obj_points[0]))))
         print(f"origin ret: {self.ret}")
+        print( "total error: {}".format(np.sqrt(mean_error/len(self.obj_points)*len(self.obj_points[0]))))
 
 
         return mean_error
@@ -356,12 +356,12 @@ def main():
     #     title="IPT430M Compare Points",
     # )
 
-    coin1 = CalibrationData("coin417rg2", exp_num=1)
-    coin1.MeanReprojectionError()
-    coin2 = CalibrationData("coin417rg2", exp_num=2)
-    coin2.MeanReprojectionError()
-    coin3 = CalibrationData("coin417rg2", exp_num=3)
-    coin3.MeanReprojectionError()
+    coin1 = CalibrationData("ipt430m", exp_num=1)
+    coin1.MeanReprojectionError2()
+    coin2 = CalibrationData("ipt430m", exp_num=2)
+    coin2.MeanReprojectionError2()
+    coin3 = CalibrationData("ipt430m", exp_num=3)
+    coin3.MeanReprojectionError2()
 
 
 
