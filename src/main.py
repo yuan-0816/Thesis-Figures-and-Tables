@@ -237,6 +237,18 @@ class CalibrationData():
             # 如果沒有 ret，則設置為 None 或其他適當的值
             self.ret = None
 
+
+    def show_calibration_data(self):
+        print(f"fx: {self.camera_matrix[0][0]}")
+        print(f"fy: {self.camera_matrix[1][1]}")
+        print(f"cx: {self.camera_matrix[0][2]}")
+        print(f"cy: {self.camera_matrix[1][2]}")
+        print(f"k1: {self.dist_coeffs[0][0]}")
+        print(f"k2: {self.dist_coeffs[0][1]}")
+        print(f"p1: {self.dist_coeffs[0][2]}")
+        print(f"p2: {self.dist_coeffs[0][3]}")
+        print(f"k3: {self.dist_coeffs[0][4]}")
+
     def MeanReprojectionError(self):
         '''
         計算重投影誤差的平均值, opencv ret 的回傳值
@@ -356,12 +368,13 @@ def main():
     #     title="IPT430M Compare Points",
     # )
 
-    coin1 = CalibrationData("ipt430m", exp_num=1)
-    coin1.MeanReprojectionError2()
-    coin2 = CalibrationData("ipt430m", exp_num=2)
-    coin2.MeanReprojectionError2()
-    coin3 = CalibrationData("ipt430m", exp_num=3)
-    coin3.MeanReprojectionError2()
+    coin1 = CalibrationData("ipt430m", exp_num=3)
+    # coin1.MeanReprojectionError2()
+    coin1.show_calibration_data()
+    # coin2 = CalibrationData("ipt430m", exp_num=2)
+    # coin2.MeanReprojectionError2()
+    # coin3 = CalibrationData("ipt430m", exp_num=3)
+    # coin3.MeanReprojectionError2()
 
 
 
