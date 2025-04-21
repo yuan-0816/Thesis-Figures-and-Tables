@@ -368,9 +368,10 @@ def main():
     #     title="IPT430M Compare Points",
     # )
 
-    coin1 = CalibrationData("ipt430m", exp_num=3)
-    # coin1.MeanReprojectionError2()
-    coin1.show_calibration_data()
+
+    coin1 = CalibrationData("ds4025ft", exp_num=1)
+    coin1.MeanReprojectionError2()
+    # coin1.show_calibration_data()
     # coin2 = CalibrationData("ipt430m", exp_num=2)
     # coin2.MeanReprojectionError2()
     # coin3 = CalibrationData("ipt430m", exp_num=3)
