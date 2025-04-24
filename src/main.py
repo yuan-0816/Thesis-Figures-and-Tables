@@ -239,15 +239,15 @@ class CalibrationData():
 
 
     def show_calibration_data(self):
-        print(f"fx: {self.camera_matrix[0][0]}")
-        print(f"fy: {self.camera_matrix[1][1]}")
-        print(f"cx: {self.camera_matrix[0][2]}")
-        print(f"cy: {self.camera_matrix[1][2]}")
-        print(f"k1: {self.dist_coeffs[0][0]}")
-        print(f"k2: {self.dist_coeffs[0][1]}")
-        print(f"p1: {self.dist_coeffs[0][2]}")
-        print(f"p2: {self.dist_coeffs[0][3]}")
-        print(f"k3: {self.dist_coeffs[0][4]}")
+        print(f"fx: {self.camera_matrix[0][0]:.3f}")
+        print(f"fy: {self.camera_matrix[1][1]:.3f}")
+        print(f"cx: {self.camera_matrix[0][2]:.3f}")
+        print(f"cy: {self.camera_matrix[1][2]:.3f}")
+        print(f"k1: {self.dist_coeffs[0][0]:.3f}")
+        print(f"k2: {self.dist_coeffs[0][1]:.3f}")
+        print(f"p1: {self.dist_coeffs[0][2]:.3f}")
+        print(f"p2: {self.dist_coeffs[0][3]:.3f}")
+        print(f"k3: {self.dist_coeffs[0][4]:.3f}")
 
     def MeanReprojectionError(self):
         '''
@@ -296,7 +296,8 @@ class CalibrationData():
             # all_dist += cv2.norm(self.img_points[i], reprojected_points, cv2.NORM_L2)
 
         # print(f"Total reprojection error: {all_dist/len(self.obj_points)/len(self.obj_points[0])}")
-        print(f"Mean reprojection error: {mean_error/len(self.obj_points)}")
+        mre = mean_error/len(self.obj_points)
+        print(f"Mean reprojection error: {mre:.3f}")
 
 
 
@@ -369,7 +370,8 @@ def main():
     # )
 
 
-    coin1 = CalibrationData("ds4025ft", exp_num=1)
+    coin1 = CalibrationData("ipt430m", exp_num=3)
+    coin1.show_calibration_data()
     coin1.MeanReprojectionError2()
     # coin1.show_calibration_data()
     # coin2 = CalibrationData("ipt430m", exp_num=2)
