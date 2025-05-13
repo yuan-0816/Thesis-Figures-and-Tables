@@ -361,18 +361,18 @@ class CalibrationData():
 
 
 def main():
-    # compare_points(
-    #     IPT430M_REAL_POINTS,
-    #     IPT430M_PREDICT_POINTS,
-    #     real_points_name="real",
-    #     predict_poits_name="predict",
-    #     title="IPT430M Compare Points",
-    # )
+    compare_points(
+        IPT430M_REAL_POINTS,
+        IPT430M_PREDICT_POINTS,
+        real_points_name="real",
+        predict_poits_name="predict",
+        title="IPT430M Compare Points",
+    )
 
 
-    coin1 = CalibrationData("ipt430m", exp_num=3)
-    coin1.show_calibration_data()
-    coin1.MeanReprojectionError2()
+    # coin1 = CalibrationData("ipt430m", exp_num=3)
+    # coin1.show_calibration_data()
+    # coin1.MeanReprojectionError2()
     # coin1.show_calibration_data()
     # coin2 = CalibrationData("ipt430m", exp_num=2)
     # coin2.MeanReprojectionError2()
