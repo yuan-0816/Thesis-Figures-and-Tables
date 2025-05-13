@@ -1,0 +1,56 @@
+/thermal_DS4025FT/uwb_experiment:
+  ros__parameters:
+    Alert_Waiting_Time: 5
+    Thermal_LowerLeft:
+    - 1216
+    - 1003
+    Thermal_LowerRight:
+    - 1179
+    - 184
+    Thermal_UpperLeft:
+    - 127
+    - 956
+    Thermal_UpperRight:
+    - 209
+    - 244
+    Threshold_Temperature: 50.0
+    World_LowerLeft:
+    - 5.4
+    - 3.2
+    World_LowerRight:
+    - 8.9
+    - 2.6
+    World_UpperLeft:
+    - 5.7
+    - 5.3
+    World_UpperRight:
+    - 8.5
+    - 5.1
+/thermal_IPT430M/uwb_experiment:
+  ros__parameters:
+    Alert_Waiting_Time: 5
+    Thermal_LowerLeft:
+    - 112
+    - 379
+    Thermal_LowerRight:
+    - 505
+    - 152
+    Thermal_UpperLeft:
+    - 58
+    - 67
+    Thermal_UpperRight:
+    - 316
+    - 49
+    Threshold_Temperature: 50.0
+    World_LowerLeft:
+    - 5.164
+    - 0.184
+    World_LowerRight:
+    - 3.767
+    - 2.802
+    World_UpperLeft:
+    - 0.34
+    - 0.203
+    World_UpperRight:
+    - 0.348
+    - 3.015
