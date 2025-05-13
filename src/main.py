@@ -9,6 +9,22 @@ result_path = os.path.join(
 )
 
 
+# class DistortionExp:
+#     def __init__(
+#         self,
+#         dis_real_points,
+#         dis_predict_points,
+#         undis_real_points,
+#         undis_predict_points,
+#     ):
+#         self.dis_real_points = dis_real_points
+#         self.dis_predict_points = dis_predict_points
+#         self.undis_real_points = undis_real_points
+#         self.undis_predict_points = undis_predict_points
+
+#     def plot_distortion(self):
+        
+
 def compare_points(
     real_points,
     predict_points,
@@ -74,6 +90,8 @@ def combine_two_fig(compare_fig1, compare_fig2):
     ax1.set_xlabel(fig1.axes[0].get_xlabel())  # 使用x軸標籤
     ax1.set_ylabel(fig1.axes[0].get_ylabel())  # 使用y軸標籤
     ax1.legend()
+    ax1.grid(True)  
+    ax1.axis("equal")
 
     # 直接將第二個子圖的數據繪製到 ax2
     ax2.scatter(
@@ -94,6 +112,12 @@ def combine_two_fig(compare_fig1, compare_fig2):
     ax2.set_xlabel(fig2.axes[0].get_xlabel())  # 使用x軸標籤
     ax2.set_ylabel(fig2.axes[0].get_ylabel())  # 使用y軸標籤
     ax2.legend()
+    ax2.grid(True)
+    ax2.axis("equal")
+
+    # for i in range(len(scatter_real_1.get_offsets())):
+    #     ax1.annotate(str(i+1), (scatter_real_1.get_offsets()[i, 0], scatter_real_1.get_offsets()[i, 1]))
+    #     ax2.annotate(str(i+1), (scatter_real_1.get_offsets()[i, 0], scatter_real_1.get_offsets()[i, 1]))
 
     # 調整佈局
     plt.tight_layout()

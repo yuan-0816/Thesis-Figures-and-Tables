@@ -1,20 +1,11 @@
 
 
-
-
-def load_npy(file_path):
-    """
-    Load a .npy file and return its contents.
-    """
-    import numpy as np
-    import os
-    return np.load(file_path, allow_pickle=True)
-
-
-
-def circle_pattern():
+def circle_pattern(col=3, row=11):
     '''
-    圓形標定板
+    生成圓形標定板順序
+    :param col: 圓形標定板的列數
+    :param row: 圓形標定板的行數
+    :return: 生成的圓形標定板的座標點 np.array
     '''
 
     import numpy as np
@@ -39,7 +30,7 @@ def circle_pattern():
 
     objp = np.array(objp, np.float32)
 
-    print(objp)
+    # print(objp)
 
     index = np.lexsort((objp[:, 2], objp[:, 1], objp[:, 0]))
 
@@ -56,11 +47,11 @@ def circle_pattern():
     # plt.ylabel("Y")
     # plt.grid(True)
     # plt.show()
-    print(ans)
+    # print(ans)
     return ans
 
 
 
 if __name__ == "__main__":
-    pass
+    circle_pattern()
 
