@@ -4,6 +4,7 @@
 
 __pycache__/
 **/__pycache__/
+**/*.cpython-312.pyc
 *.py[cod]
-*.pyc
+**/*.pyc
 *.pyo
