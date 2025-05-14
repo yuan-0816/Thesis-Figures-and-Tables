@@ -118,7 +118,7 @@ class DistortionExp:
         plt.show()
 
 
-    def caculate_error(self):
+    def calculate_error(self):
         # 計算誤差
         # 我要分別計算distortion和undistortion 的 x,y的誤差
         dis_x_error = np.abs(self.dis_real_points[:, 0] - self.dis_predict_points[:, 0])
@@ -159,61 +159,163 @@ class DistortionExp:
         print(f"Undistortion Mean Error: {undis_mean_error:.4f}")
         print(f"Undistortion Max Error: {undis_max_error:.4f}")
 
-        return dis_mean_error, undis_mean_error, self.ret
+        return dis_mean_error, undis_mean_error
         
 
 
-def UWB_to_pixel(device="IPT430M"):
+class UwbExp:
+    def __init__(
+            self, 
+            ipt_real_points=None, 
+            ipt_predict_points=None,
+            ds_real_points=None,
+            ds_predict_points=None,
+        ):
+        self.ipt_real_points = ipt_real_points
+        self.ipt_predict_points = ipt_predict_points
+        self.ds_real_points = ds_real_points
+        self.ds_predict_points = ds_predict_points
 
-    # 載入資料
-    pixel_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        f"../data/thermal_{device}_pixel_points.npy",
-    )
-    world_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        f"../data/thermal_{device}_world_points.npy",
-    )
+    def plot_points_compare(
+        self,
+        points1,
+        points2,
+        points1_name=None,
+        points2_name=None,
+        title=None,
+        fig_size=(7, 7),
+        alpha=0.5,
+        grid=False,
+        x_label=None,
+        y_label=None,
+        x_range=None,   # 設置 x 軸範圍
+        y_range=None,   # 設置 y 軸範圍
+        ax=None,
+    ):
+        if ax is None:
+            fig, ax = plt.subplots(figsize=fig_size)
+        else:
+            fig = ax.figure  # 如果傳入了 ax，則獲取它的 figure
 
-    # 載入資料
-    pixel_points = np.load(pixel_path)
-    world_points = np.load(world_path)
+        if title is not None:
+            ax.set_title(title)
+            # fig.suptitle(title, fontsize=12)
 
-    print("pixel_points", pixel_points)
-    print("world_points", world_points)
+        scatter_points1 = ax.scatter(
+            points1[:, 0], points1[:, 1], c="red", label=points1_name, alpha=alpha
+        )
+        scatter_points2 = ax.scatter(
+            points2[:, 0], points2[:, 1], c="blue", label=points2_name, alpha=alpha
+        )
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.legend()
+        ax.grid(grid)
+        ax.axis("equal")
 
-    # 畫布設置
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        ax.set_aspect('equal', adjustable='box')
+        # 如果 x_range 和 y_range 被提供，設置範圍
+        if x_range is not None:
+            ax.set_xlim(x_range)
+        if y_range is not None:
+            ax.set_ylim(y_range)
+        
+        return fig, ax
+    
 
-    # ===== 畫像素座標圖 =====
-    ax1.set_title("Pixel Coordinates")
-    ax1.scatter(pixel_points[:, 0], pixel_points[:, 1], c="red", label="pixel")
-    ax1.set_xlabel("x (pixels)")
-    ax1.set_ylabel("y (pixels)")
-    ax1.invert_yaxis()  # 影像 y 軸通常是反的
-    ax1.grid(False)
-    ax1.legend()
-    ax1.axis("equal")
+    def plot_compare_distortion_and_undistortion(self):
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
+        fig.suptitle("IPT430M vs DS4025FT", fontsize=12)
 
-    # ===== 畫世界座標圖 =====
-    ax2.set_title("World Coordinates")
-    ax2.scatter(world_points[:, 0], world_points[:, 1], c="blue", label="world")
-    ax2.set_xlabel("x (world)")
-    ax2.set_ylabel("y (world)")
-    ax2.grid(False)
-    ax2.legend()
-    ax2.axis("equal")
+        fig1, ax1 = self.plot_points_compare(
+            points1=self.ipt_real_points,
+            points2=self.ipt_predict_points,
+            title="IPT430M",
+            x_label="x (meters)",
+            y_label="y (meters)",
+            points1_name="Real Points",
+            points2_name="Predicted Points",
+            # x_range=(-1.5, 6),  # 設置 x 軸範圍
+            # y_range=(-1.5, 6),  # 設置 y 軸範圍
+            ax=ax1,
+        )  
 
-    for i in range(len(pixel_points)):
-        ax1.annotate(str(i), (pixel_points[i, 0], pixel_points[i, 1]))
-        ax2.annotate(str(i), (world_points[i, 0], world_points[i, 1]))
+        fig2, ax2 = self.plot_points_compare(
+            points1=self.ds_real_points,
+            points2=self.ds_predict_points,
+            title="DS4025FT",
+            x_label="x (meters)",
+            y_label="y (meters)",
+            points1_name="Real Points",
+            points2_name="Predicted Points",
+            # x_range=(-1.5, 6),  # 設置 x 軸範圍
+            # y_range=(-1.5, 6),  # 設置 y 軸範圍
+            ax=ax2,
+        )
+        return fig, (ax1, ax2)
 
-    plt.tight_layout()
-    plt.show()
+    
+    def show_fig(self, *figures, save_path=None):
+        # 確保 save_path 路徑存在
+        if save_path and not os.path.exists(save_path):
+            os.makedirs(save_path)
+
+        for fig, ax in figures:
+            # 顯示圖形
+            plt.figure(fig)
+
+        # 顯示所有圖表
+        plt.show()
+
+    def calculate_error(self):
+        # 計算誤差
+        # 我要分別計算distortion和undistortion 的 x,y的誤差
+        ipt_x_error = np.abs(self.ipt_real_points[:, 0] - self.ipt_predict_points[:, 0])
+        ipt_y_error = np.abs(self.ipt_real_points[:, 1] - self.ipt_predict_points[:, 1])
+        ipt_x_mean_error = np.mean(ipt_x_error)
+        ipt_y_mean_error = np.mean(ipt_y_error)
+        ipt_x_max_error = np.max(ipt_x_error)
+        ipt_y_max_error = np.max(ipt_y_error)
+        # 計算每個點的誤差
+        ipt_error = np.linalg.norm(self.ipt_real_points - self.ipt_predict_points, axis=1)
+        ipt_mean_error = np.mean(ipt_error)
+        ipt_max_error = np.max(ipt_error)
+
+        print(f"--------------------IPT430M--------------------")
+        print(f"IPT430M X Mean Error: {ipt_x_mean_error:.4f}")
+        print(f"IPT430M Y Mean Error: {ipt_y_mean_error:.4f}")
+        print(f"IPT430M X Max Error: {ipt_x_max_error:.4f}")
+        print(f"IPT430M Y Max Error: {ipt_y_max_error:.4f}")
+        print(f"IPT430M Mean Error: {ipt_mean_error:.4f}")
+        print(f"IPT430M Max Error: {ipt_max_error:.4f}")
+
+
+
+        DS_x_error = np.abs(self.ds_real_points[:, 0] - self.ds_predict_points[:, 0])
+        DS_y_error = np.abs(self.ds_real_points[:, 1] - self.ds_predict_points[:, 1])
+        DS_x_mean_error = np.mean(DS_x_error)
+        DS_y_mean_error = np.mean(DS_y_error)
+        DS_x_max_error = np.max(DS_x_error)
+        DS_y_max_error = np.max(DS_y_error)
+        DS_error = np.linalg.norm(self.ds_real_points - self.ds_predict_points, axis=1)
+        DS_mean_error = np.mean(DS_error)
+        DS_max_error = np.max(DS_error)
+        print(f"--------------------DS4025FT--------------------")
+        print(f"DS4025FT X Mean Error: {DS_x_mean_error:.4f}")
+        print(f"DS4025FT Y Mean Error: {DS_y_mean_error:.4f}")
+        print(f"DS4025FT X Max Error: {DS_x_max_error:.4f}")
+        print(f"DS4025FT Y Max Error: {DS_y_max_error:.4f}")
+        print(f"DS4025FT Mean Error: {DS_mean_error:.4f}")
+        print(f"DS4025FT Max Error: {DS_max_error:.4f}")
+
+
+
+
+
+
 
 
 import cv2
-import glob
 
 
 class CalibrationData:
@@ -354,53 +456,82 @@ class CalibrationData:
     #     print(f"\n📌 Overall max MRE: {max_mre}")
 
 
+
+
 def main():
 
+    # from points import (
+    #     dis_exp_distortion_predict_points,
+    #     dis_exp_distortion_real_points,
+    #     dis_exp_undistortion_predict_points,
+    #     dis_exp_undistortion_real_points,
+    # )
+
+
+    # distortion_exp = DistortionExp(
+    #     dis_predict_points=dis_exp_distortion_predict_points,
+    #     dis_real_points=dis_exp_distortion_real_points,
+    #     undis_predict_points=dis_exp_undistortion_predict_points,
+    #     undis_real_points=dis_exp_undistortion_real_points,
+    # )
+
+    # distortion_exp.calculate_error()
+
+    # distortion_exp.show_fig(
+    #     distortion_exp.plot_points_compare(
+    #         points1=distortion_exp.dis_real_points, 
+    #         points2=distortion_exp.dis_predict_points, 
+    #         title="Distortion Points",
+    #         x_label="x (meters)",
+    #         y_label="y (meters)",
+    #         points1_name="Real Points",
+    #         points2_name="Predicted Points",
+    #         x_range=(-1.5, 6),  # 設置 x 軸範圍
+    #         y_range=(-1.5, 6),  # 設置 y 軸範圍
+    #     ),
+    #     # # undistortion
+    #     distortion_exp.plot_points_compare(
+    #         points1=distortion_exp.undis_real_points, 
+    #         points2=distortion_exp.undis_predict_points, 
+    #         title="Undistortion Points",
+    #         x_label="x (meters)",
+    #         y_label="y (meters)",
+    #         points1_name="Real Points",
+    #         points2_name="Predicted Points",
+    #         x_range=(-1.5, 6),  # 設置 x 軸範圍
+    #         y_range=(-1.5, 6),  # 設置 y 軸範圍
+    #     ),
+    #     distortion_exp.plot_compare_distortion_and_undistortion(),
+    # )
+
+
     from points import (
-        dis_exp_distortion_predict_points,
-        dis_exp_distortion_real_points,
-        dis_exp_undistortion_predict_points,
-        dis_exp_undistortion_real_points,
+        uwb_exp_ipt430m_homography_real_points,
+        uwb_exp_ipt430m_homography_pixel_points,
+        uwb_exp_ipt430m_pixel_points,
+        uwb_exp_ipt430m_predict_points,
+        uwb_exp_ipt430m_real_points,
+
+        uwb_exp_ds4025ft_homography_real_points,
+        uwb_exp_ds4025ft_homography_pixel_points,
+        uwb_exp_ds4025ft_pixel_points,
+        uwb_exp_ds4025ft_predict_points,
+        uwb_exp_ds4025ft_real_points,
+    )
+    uwb_exp = UwbExp(
+        ipt_real_points=uwb_exp_ipt430m_real_points,
+        ipt_predict_points=uwb_exp_ipt430m_predict_points,
+        ds_real_points=uwb_exp_ds4025ft_real_points,
+        ds_predict_points=uwb_exp_ds4025ft_predict_points,
     )
 
+    uwb_exp.calculate_error()
 
-    distortion_exp = DistortionExp(
-        dis_predict_points=dis_exp_distortion_predict_points,
-        dis_real_points=dis_exp_distortion_real_points,
-        undis_predict_points=dis_exp_undistortion_predict_points,
-        undis_real_points=dis_exp_undistortion_real_points,
+    uwb_exp.show_fig(
+        uwb_exp.plot_compare_distortion_and_undistortion()
     )
 
-    distortion_exp.caculate_error()
-
-    distortion_exp.show_fig(
-        distortion_exp.plot_points_compare(
-            points1=distortion_exp.dis_real_points, 
-            points2=distortion_exp.dis_predict_points, 
-            title="Distortion Points",
-            x_label="x (meters)",
-            y_label="y (meters)",
-            points1_name="Real Points",
-            points2_name="Predicted Points",
-            x_range=(-1.5, 6),  # 設置 x 軸範圍
-            y_range=(-1.5, 6),  # 設置 y 軸範圍
-        ),
-        # # undistortion
-        distortion_exp.plot_points_compare(
-            points1=distortion_exp.undis_real_points, 
-            points2=distortion_exp.undis_predict_points, 
-            title="Undistortion Points",
-            x_label="x (meters)",
-            y_label="y (meters)",
-            points1_name="Real Points",
-            points2_name="Predicted Points",
-            x_range=(-1.5, 6),  # 設置 x 軸範圍
-            y_range=(-1.5, 6),  # 設置 y 軸範圍
-        ),
-        distortion_exp.plot_compare_distortion_and_undistortion(),
-    )
     
-
 
 
     # coin1 = CalibrationData("ipt430m", exp_num=3)
