@@ -5,123 +5,162 @@ import os
 
 result_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    f"../results",
+    f"../result"
 )
 
 
-# class DistortionExp:
-#     def __init__(
-#         self,
-#         dis_real_points,
-#         dis_predict_points,
-#         undis_real_points,
-#         undis_predict_points,
-#     ):
-#         self.dis_real_points = dis_real_points
-#         self.dis_predict_points = dis_predict_points
-#         self.undis_real_points = undis_real_points
-#         self.undis_predict_points = undis_predict_points
+class DistortionExp:
+    def __init__(
+        self,
+        dis_real_points,
+        dis_predict_points,
+        undis_real_points,
+        undis_predict_points,
+        save_path=None,
+    ):
+        self.dis_real_points = dis_real_points
+        self.dis_predict_points = dis_predict_points
+        self.undis_real_points = undis_real_points
+        self.undis_predict_points = undis_predict_points
+        self.save_path = save_path
 
-#     def plot_distortion(self):
+    def plot_points_compare(
+        self,
+        points1,
+        points2,
+        points1_name=None,
+        points2_name=None,
+        title=None,
+        fig_size=(7, 7),
+        alpha=0.5,
+        grid=False,
+        x_label=None,
+        y_label=None,
+        x_range=None,   # 設置 x 軸範圍
+        y_range=None,   # 設置 y 軸範圍
+        ax=None,
+    ):
+        if ax is None:
+            fig, ax = plt.subplots(figsize=fig_size)
+        else:
+            fig = ax.figure  # 如果傳入了 ax，則獲取它的 figure
+
+        if title is not None:
+            ax.set_title(title)
+            # fig.suptitle(title, fontsize=12)
+
+        scatter_points1 = ax.scatter(
+            points1[:, 0], points1[:, 1], c="red", label=points1_name, alpha=alpha
+        )
+        scatter_points2 = ax.scatter(
+            points2[:, 0], points2[:, 1], c="blue", label=points2_name, alpha=alpha
+        )
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.legend()
+        ax.grid(grid)
+        ax.axis("equal")
+
+        ax.set_aspect('equal', adjustable='box')
+        # 如果 x_range 和 y_range 被提供，設置範圍
+        if x_range is not None:
+            ax.set_xlim(x_range)
+        if y_range is not None:
+            ax.set_ylim(y_range)
         
+        return fig, ax
+    
 
-def compare_points(
-    real_points,
-    predict_points,
-    real_points_name="real",
-    predict_points_name="predict",
-    title="Compare Points",
-):
-    fig, ax = plt.subplots(figsize=(10, 10))
+    def plot_compare_distortion_and_undistortion(self):
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
+        # fig.suptitle("Distortion vs Undistortion", fontsize=12)
 
-    # 畫布設置
-    ax.set_title(title)
-    scatter_real = ax.scatter(
-        real_points[:, 0], real_points[:, 1], c="red", label=real_points_name
-    )
-    scatter_predict = ax.scatter(
-        predict_points[:, 0], predict_points[:, 1], c="blue", label=predict_points_name
-    )
-    ax.set_xlabel("x (meters)")
-    ax.set_ylabel("y (meters)")
-    # ax.invert_yaxis()  # 影像 y 軸通常是反的
-    ax.grid(True)
-    ax.legend()
-    ax.axis("equal")
+        # distortion
+        fig1, ax1 = self.plot_points_compare(
+            points1=self.dis_real_points, 
+            points2=self.dis_predict_points, 
+            title="Distortion",
+            x_label="x (meters)",
+            y_label="y (meters)",
+            points1_name="Real Points",
+            points2_name="Predicted Points",
+            x_range=(-1.5, 6),  # 設置 x 軸範圍
+            y_range=(-1.5, 6),  # 設置 y 軸範圍
+            ax=ax1,
+        )  
 
-    # for i in range(len(real_points)):
-    #     ax.annotate(str(i), (real_points[i, 0], real_points[i, 1]))
-    #     ax.annotate(str(i), (predict_points[i, 0], predict_points[i, 1]))
+        # undistortion
+        fig2, ax2 = self.plot_points_compare(
+            points1=self.undis_real_points, 
+            points2=self.undis_predict_points, 
+            title="Undistortion",
+            x_label="x (meters)",
+            y_label="y (meters)",
+            points1_name="Real Points",
+            points2_name="Predicted Points",
+            x_range=(-1.5, 6),  # 設置 x 軸範圍
+            y_range=(-1.5, 6),  # 設置 y 軸範圍
+            ax=ax2,
+        )
+        return fig, (ax1, ax2)
 
-    # plt.tight_layout()
-    # plt.show()
+    
+    def show_fig(self, *figures, save_path=None):
+        # 確保 save_path 路徑存在
+        if save_path and not os.path.exists(save_path):
+            os.makedirs(save_path)
 
-    return fig, ax, scatter_real, scatter_predict
+        for fig, ax in figures:
+            # 顯示圖形
+            plt.figure(fig)
+
+        # 顯示所有圖表
+        plt.show()
 
 
-def combine_two_fig(compare_fig1, compare_fig2):
+    def caculate_error(self):
+        # 計算誤差
+        # 我要分別計算distortion和undistortion 的 x,y的誤差
+        dis_x_error = np.abs(self.dis_real_points[:, 0] - self.dis_predict_points[:, 0])
+        dis_y_error = np.abs(self.dis_real_points[:, 1] - self.dis_predict_points[:, 1])
+        dis_x_mean_error = np.mean(dis_x_error)
+        dis_y_mean_error = np.mean(dis_y_error)
+        dis_x_max_error = np.max(dis_x_error)
+        dis_y_max_error = np.max(dis_y_error)
+        # 計算每個點的誤差
+        dis_error = np.linalg.norm(self.dis_real_points - self.dis_predict_points, axis=1)
+        dis_mean_error = np.mean(dis_error)
+        dis_max_error = np.max(dis_error)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
+        print(f"--------------------Distortion--------------------")
+        print(f"Distortion X Mean Error: {dis_x_mean_error:.4f}")
+        print(f"Distortion Y Mean Error: {dis_y_mean_error:.4f}")
+        print(f"Distortion X Max Error: {dis_x_max_error:.4f}")
+        print(f"Distortion Y Max Error: {dis_y_max_error:.4f}")
+        print(f"Distortion Mean Error: {dis_mean_error:.4f}")
+        print(f"Distortion Max Error: {dis_max_error:.4f}")
 
-    # 使用 compare_points 函數來獲得圖形和軸
-    fig1, ax1_inner, scatter_real_1, scatter_predict_1 = (
-        compare_fig1  # 返回第一組點的圖形和軸
-    )
-    fig2, ax2_inner, scatter_real_2, scatter_predict_2 = (
-        compare_fig2  # 返回第二組點的圖形和軸
-    )
 
-    # 直接將第一個子圖的數據繪製到 ax1
-    ax1.scatter(
-        scatter_real_1.get_offsets()[:, 0],
-        scatter_real_1.get_offsets()[:, 1],
-        c="red",
-        label=scatter_real_1.get_label(),
-        alpha=0.5
-    )
-    ax1.scatter(
-        scatter_predict_1.get_offsets()[:, 0],
-        scatter_predict_1.get_offsets()[:, 1],
-        c="blue",
-        label=scatter_predict_1.get_label(),
-        alpha=0.5
-    )
-    ax1.set_title(fig1.axes[0].get_title())  # 使用標題
-    ax1.set_xlabel(fig1.axes[0].get_xlabel())  # 使用x軸標籤
-    ax1.set_ylabel(fig1.axes[0].get_ylabel())  # 使用y軸標籤
-    ax1.legend()
-    ax1.grid(True)  
-    ax1.axis("equal")
 
-    # 直接將第二個子圖的數據繪製到 ax2
-    ax2.scatter(
-        scatter_real_2.get_offsets()[:, 0],
-        scatter_real_2.get_offsets()[:, 1],
-        c="red",
-        label=scatter_real_2.get_label(),
-        alpha=0.5,
-    )
-    ax2.scatter(
-        scatter_predict_2.get_offsets()[:, 0],
-        scatter_predict_2.get_offsets()[:, 1],
-        c="blue",
-        label=scatter_predict_2.get_label(),
-        alpha=0.5,
-    )
-    ax2.set_title(fig2.axes[0].get_title())  # 使用標題
-    ax2.set_xlabel(fig2.axes[0].get_xlabel())  # 使用x軸標籤
-    ax2.set_ylabel(fig2.axes[0].get_ylabel())  # 使用y軸標籤
-    ax2.legend()
-    ax2.grid(True)
-    ax2.axis("equal")
+        undis_x_error = np.abs(self.undis_real_points[:, 0] - self.undis_predict_points[:, 0])
+        undis_y_error = np.abs(self.undis_real_points[:, 1] - self.undis_predict_points[:, 1])
+        undis_x_mean_error = np.mean(undis_x_error)
+        undis_y_mean_error = np.mean(undis_y_error)
+        undis_x_max_error = np.max(undis_x_error)
+        undis_y_max_error = np.max(undis_y_error)
+        undis_error = np.linalg.norm(self.undis_real_points - self.undis_predict_points, axis=1)
+        undis_mean_error = np.mean(undis_error)
+        undis_max_error = np.max(undis_error)
+        print(f"--------------------Undistortion--------------------")
+        print(f"Undistortion X Mean Error: {undis_x_mean_error:.4f}")
+        print(f"Undistortion Y Mean Error: {undis_y_mean_error:.4f}")
+        print(f"Undistortion X Max Error: {undis_x_max_error:.4f}")
+        print(f"Undistortion Y Max Error: {undis_y_max_error:.4f}")
+        print(f"Undistortion Mean Error: {undis_mean_error:.4f}")
+        print(f"Undistortion Max Error: {undis_max_error:.4f}")
 
-    # for i in range(len(scatter_real_1.get_offsets())):
-    #     ax1.annotate(str(i+1), (scatter_real_1.get_offsets()[i, 0], scatter_real_1.get_offsets()[i, 1]))
-    #     ax2.annotate(str(i+1), (scatter_real_1.get_offsets()[i, 0], scatter_real_1.get_offsets()[i, 1]))
-
-    # 調整佈局
-    plt.tight_layout()
-    plt.show()
+        return dis_mean_error, undis_mean_error, self.ret
+        
 
 
 def UWB_to_pixel(device="IPT430M"):
@@ -316,6 +355,7 @@ class CalibrationData:
 
 
 def main():
+
     from points import (
         dis_exp_distortion_predict_points,
         dis_exp_distortion_real_points,
@@ -323,22 +363,45 @@ def main():
         dis_exp_undistortion_real_points,
     )
 
-    combine_two_fig(
-        compare_points(
-            dis_exp_distortion_real_points,
-            dis_exp_distortion_predict_points,
-            real_points_name="real",
-            predict_points_name="predict",
-            title="Distortion Predict Points",
-        ),
-        compare_points(
-            dis_exp_undistortion_real_points,
-            dis_exp_undistortion_predict_points,
-            real_points_name="real",
-            predict_points_name="predict",
-            title="Undistortion Predict Points",
-        ),
+
+    distortion_exp = DistortionExp(
+        dis_predict_points=dis_exp_distortion_predict_points,
+        dis_real_points=dis_exp_distortion_real_points,
+        undis_predict_points=dis_exp_undistortion_predict_points,
+        undis_real_points=dis_exp_undistortion_real_points,
     )
+
+    distortion_exp.caculate_error()
+
+    distortion_exp.show_fig(
+        distortion_exp.plot_points_compare(
+            points1=distortion_exp.dis_real_points, 
+            points2=distortion_exp.dis_predict_points, 
+            title="Distortion Points",
+            x_label="x (meters)",
+            y_label="y (meters)",
+            points1_name="Real Points",
+            points2_name="Predicted Points",
+            x_range=(-1.5, 6),  # 設置 x 軸範圍
+            y_range=(-1.5, 6),  # 設置 y 軸範圍
+        ),
+        # # undistortion
+        distortion_exp.plot_points_compare(
+            points1=distortion_exp.undis_real_points, 
+            points2=distortion_exp.undis_predict_points, 
+            title="Undistortion Points",
+            x_label="x (meters)",
+            y_label="y (meters)",
+            points1_name="Real Points",
+            points2_name="Predicted Points",
+            x_range=(-1.5, 6),  # 設置 x 軸範圍
+            y_range=(-1.5, 6),  # 設置 y 軸範圍
+        ),
+        distortion_exp.plot_compare_distortion_and_undistortion(),
+    )
+    
+
+
 
     # coin1 = CalibrationData("ipt430m", exp_num=3)
     # coin1.show_calibration_data()
