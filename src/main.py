@@ -457,6 +457,41 @@ class CalibrationData:
 
 
 
+import math
+
+class UAV_Find_Fire:
+    def __init__(self):
+        omega = 2 * math.pi / 10  # 每10秒繞一圈的角速度
+        k = 0.3 / (2 * math.pi)  # 螺旋擴展速率，每秒擴展0.3m
+        max_radius = 1.0  # 當半徑到1.0時停止繪圖
+        angle_max = 50  # 繪製的最大角度
+        
+        # 生成時間和角度
+        time = np.linspace(0, angle_max, 1000)  # 時間範圍，從0到最大角度，總共1000個點
+        angle = omega * time  # 計算角度
+        spiral_radius = k * angle  # 計算螺旋半徑
+
+        # 計算 x 和 y 的位置
+        x = spiral_radius * np.sin(angle)
+        y = spiral_radius * np.cos(angle)
+        
+        # 限制半徑最大值
+        self.x = np.clip(x, -max_radius, max_radius)
+        self.y = np.clip(y, -max_radius, max_radius)
+
+    def plot_spiral(self):
+        plt.figure(figsize=(6, 6))
+        plt.plot(self.x, self.y, label="Spiral Path")
+        plt.title("Spiral Path for Fire Source Search")
+        plt.xlabel("X (meters)")
+        plt.ylabel("Y (meters)")
+        plt.grid(False)
+        plt.axis('equal')  # 保持X和Y軸的比例相同
+        plt.legend()
+
+        # 顯示圖表
+        plt.show()
+
 
 def main():
 
@@ -505,31 +540,31 @@ def main():
     # )
 
 
-    from points import (
-        uwb_exp_ipt430m_homography_real_points,
-        uwb_exp_ipt430m_homography_pixel_points,
-        uwb_exp_ipt430m_pixel_points,
-        uwb_exp_ipt430m_predict_points,
-        uwb_exp_ipt430m_real_points,
+    # from points import (
+    #     uwb_exp_ipt430m_homography_real_points,
+    #     uwb_exp_ipt430m_homography_pixel_points,
+    #     uwb_exp_ipt430m_pixel_points,
+    #     uwb_exp_ipt430m_predict_points,
+    #     uwb_exp_ipt430m_real_points,
 
-        uwb_exp_ds4025ft_homography_real_points,
-        uwb_exp_ds4025ft_homography_pixel_points,
-        uwb_exp_ds4025ft_pixel_points,
-        uwb_exp_ds4025ft_predict_points,
-        uwb_exp_ds4025ft_real_points,
-    )
-    uwb_exp = UwbExp(
-        ipt_real_points=uwb_exp_ipt430m_real_points,
-        ipt_predict_points=uwb_exp_ipt430m_predict_points,
-        ds_real_points=uwb_exp_ds4025ft_real_points,
-        ds_predict_points=uwb_exp_ds4025ft_predict_points,
-    )
+    #     uwb_exp_ds4025ft_homography_real_points,
+    #     uwb_exp_ds4025ft_homography_pixel_points,
+    #     uwb_exp_ds4025ft_pixel_points,
+    #     uwb_exp_ds4025ft_predict_points,
+    #     uwb_exp_ds4025ft_real_points,
+    # )
+    # uwb_exp = UwbExp(
+    #     ipt_real_points=uwb_exp_ipt430m_real_points,
+    #     ipt_predict_points=uwb_exp_ipt430m_predict_points,
+    #     ds_real_points=uwb_exp_ds4025ft_real_points,
+    #     ds_predict_points=uwb_exp_ds4025ft_predict_points,
+    # )
 
-    uwb_exp.calculate_error()
+    # uwb_exp.calculate_error()
 
-    uwb_exp.show_fig(
-        uwb_exp.plot_compare_distortion_and_undistortion()
-    )
+    # uwb_exp.show_fig(
+    #     uwb_exp.plot_compare_distortion_and_undistortion()
+    # )
 
     
 
@@ -542,6 +577,9 @@ def main():
     # coin2.MeanReprojectionError2()
     # coin3 = CalibrationData("ipt430m", exp_num=3)
     # coin3.MeanReprojectionError2()
+
+    UAV_Find_Fire().plot_spiral()
+
 
 
 if __name__ == "__main__":
