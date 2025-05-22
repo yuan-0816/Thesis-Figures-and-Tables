@@ -523,6 +523,7 @@ def main():
     #         points2_name="Predicted Points",
     #         x_range=(-1.5, 6),  # 設置 x 軸範圍
     #         y_range=(-1.5, 6),  # 設置 y 軸範圍
+    #         fig_size=(9, 9),
     #     ),
     #     # # undistortion
     #     distortion_exp.plot_points_compare(
@@ -535,36 +536,37 @@ def main():
     #         points2_name="Predicted Points",
     #         x_range=(-1.5, 6),  # 設置 x 軸範圍
     #         y_range=(-1.5, 6),  # 設置 y 軸範圍
+    #         fig_size=(9, 9),
     #     ),
     #     distortion_exp.plot_compare_distortion_and_undistortion(),
     # )
 
 
-    # from points import (
-    #     uwb_exp_ipt430m_homography_real_points,
-    #     uwb_exp_ipt430m_homography_pixel_points,
-    #     uwb_exp_ipt430m_pixel_points,
-    #     uwb_exp_ipt430m_predict_points,
-    #     uwb_exp_ipt430m_real_points,
+    from points import (
+        uwb_exp_ipt430m_homography_real_points,
+        uwb_exp_ipt430m_homography_pixel_points,
+        uwb_exp_ipt430m_pixel_points,
+        uwb_exp_ipt430m_predict_points,
+        uwb_exp_ipt430m_real_points,
 
-    #     uwb_exp_ds4025ft_homography_real_points,
-    #     uwb_exp_ds4025ft_homography_pixel_points,
-    #     uwb_exp_ds4025ft_pixel_points,
-    #     uwb_exp_ds4025ft_predict_points,
-    #     uwb_exp_ds4025ft_real_points,
-    # )
-    # uwb_exp = UwbExp(
-    #     ipt_real_points=uwb_exp_ipt430m_real_points,
-    #     ipt_predict_points=uwb_exp_ipt430m_predict_points,
-    #     ds_real_points=uwb_exp_ds4025ft_real_points,
-    #     ds_predict_points=uwb_exp_ds4025ft_predict_points,
-    # )
+        uwb_exp_ds4025ft_homography_real_points,
+        uwb_exp_ds4025ft_homography_pixel_points,
+        uwb_exp_ds4025ft_pixel_points,
+        uwb_exp_ds4025ft_predict_points,
+        uwb_exp_ds4025ft_real_points,
+    )
+    uwb_exp = UwbExp(
+        ipt_real_points=uwb_exp_ipt430m_real_points,
+        ipt_predict_points=uwb_exp_ipt430m_predict_points,
+        ds_real_points=uwb_exp_ds4025ft_real_points,
+        ds_predict_points=uwb_exp_ds4025ft_predict_points,
+    )
 
-    # uwb_exp.calculate_error()
+    uwb_exp.calculate_error()
 
-    # uwb_exp.show_fig(
-    #     uwb_exp.plot_compare_distortion_and_undistortion()
-    # )
+    uwb_exp.show_fig(
+        uwb_exp.plot_compare_distortion_and_undistortion()
+    )
 
     
 
@@ -578,7 +580,7 @@ def main():
     # coin3 = CalibrationData("ipt430m", exp_num=3)
     # coin3.MeanReprojectionError2()
 
-    UAV_Find_Fire().plot_spiral()
+    # UAV_Find_Fire().plot_spiral()
 
 
 
