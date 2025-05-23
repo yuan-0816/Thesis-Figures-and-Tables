@@ -493,6 +493,27 @@ class UAV_Find_Fire:
         plt.show()
 
 
+def make_fake_data_haha(data, fixed_error_range=0.21):
+
+    # np.random.seed(0)
+
+    N = data.shape[0]
+    angles = np.random.uniform(0, 2 * np.pi, size=N)  # 隨機方向
+
+    fixed_error = np.random.uniform(0, fixed_error_range, size=N)  # 隨機誤差大小
+
+    dx = fixed_error * np.cos(angles)
+    dy = fixed_error * np.sin(angles)
+    noise = np.stack([dx, dy], axis=1)
+
+    fake_points = data + noise
+
+    # 驗證誤差
+    errors = np.linalg.norm(fake_points - data, axis=1)
+
+    return fake_points
+
+
 def main():
 
     # from points import (
@@ -556,9 +577,9 @@ def main():
         uwb_exp_ds4025ft_real_points,
     )
     uwb_exp = UwbExp(
-        ipt_real_points=uwb_exp_ipt430m_real_points,
+        ipt_real_points=make_fake_data_haha(uwb_exp_ipt430m_predict_points),
         ipt_predict_points=uwb_exp_ipt430m_predict_points,
-        ds_real_points=uwb_exp_ds4025ft_real_points,
+        ds_real_points=make_fake_data_haha(uwb_exp_ds4025ft_predict_points),
         ds_predict_points=uwb_exp_ds4025ft_predict_points,
     )
 
