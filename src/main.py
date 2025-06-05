@@ -563,43 +563,44 @@ def main():
     # )
 
 
-    from points import (
-        uwb_exp_ipt430m_homography_real_points,
-        uwb_exp_ipt430m_homography_pixel_points,
-        uwb_exp_ipt430m_pixel_points,
-        uwb_exp_ipt430m_predict_points,
-        uwb_exp_ipt430m_real_points,
+    # from points import (
+    #     uwb_exp_ipt430m_homography_real_points,
+    #     uwb_exp_ipt430m_homography_pixel_points,
+    #     uwb_exp_ipt430m_pixel_points,
+    #     uwb_exp_ipt430m_predict_points,
+    #     uwb_exp_ipt430m_real_points,
 
-        uwb_exp_ds4025ft_homography_real_points,
-        uwb_exp_ds4025ft_homography_pixel_points,
-        uwb_exp_ds4025ft_pixel_points,
-        uwb_exp_ds4025ft_predict_points,
-        uwb_exp_ds4025ft_real_points,
-    )
-    uwb_exp = UwbExp(
-        ipt_real_points=make_fake_data_haha(uwb_exp_ipt430m_predict_points),
-        ipt_predict_points=uwb_exp_ipt430m_predict_points,
-        ds_real_points=make_fake_data_haha(uwb_exp_ds4025ft_predict_points),
-        ds_predict_points=uwb_exp_ds4025ft_predict_points,
-    )
+    #     uwb_exp_ds4025ft_homography_real_points,
+    #     uwb_exp_ds4025ft_homography_pixel_points,
+    #     uwb_exp_ds4025ft_pixel_points,
+    #     uwb_exp_ds4025ft_predict_points,
+    #     uwb_exp_ds4025ft_real_points,
+    # )
+    # uwb_exp = UwbExp(
+    #     ipt_real_points=make_fake_data_haha(uwb_exp_ipt430m_predict_points),
+    #     ipt_predict_points=uwb_exp_ipt430m_predict_points,
+    #     ds_real_points=make_fake_data_haha(uwb_exp_ds4025ft_predict_points),
+    #     ds_predict_points=uwb_exp_ds4025ft_predict_points,
+    # )
 
-    uwb_exp.calculate_error()
+    # uwb_exp.calculate_error()
 
-    uwb_exp.show_fig(
-        uwb_exp.plot_compare_distortion_and_undistortion()
-    )
+    # uwb_exp.show_fig(
+    #     uwb_exp.plot_compare_distortion_and_undistortion()
+    # )
 
     
 
 
-    # coin1 = CalibrationData("ipt430m", exp_num=3)
-    # coin1.show_calibration_data()
-    # coin1.MeanReprojectionError2()
-    # coin1.show_calibration_data()
+    calibration_result = CalibrationData(device="ds4025ft", exp_num=3)
+    calibration_result.show_calibration_data()
+    calibration_result.MeanReprojectionError2()
+    # calibration_result.show_calibration_data()
     # coin2 = CalibrationData("ipt430m", exp_num=2)
     # coin2.MeanReprojectionError2()
     # coin3 = CalibrationData("ipt430m", exp_num=3)
     # coin3.MeanReprojectionError2()
+
 
     # UAV_Find_Fire().plot_spiral()
 
