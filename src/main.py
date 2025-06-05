@@ -85,7 +85,7 @@ class DistortionExp:
             points1_name="Real Points",
             points2_name="Predicted Points",
             x_range=(-1.5, 6),  # 設置 x 軸範圍
-            y_range=(-1.5, 6),  # 設置 y 軸範圍
+            y_range=(-0.5, 5),  # 設置 y 軸範圍
             ax=ax1,
         )  
 
@@ -99,7 +99,7 @@ class DistortionExp:
             points1_name="Real Points",
             points2_name="Predicted Points",
             x_range=(-1.5, 6),  # 設置 x 軸範圍
-            y_range=(-1.5, 6),  # 設置 y 軸範圍
+            y_range=(-0.5, 5),  # 設置 y 軸範圍
             ax=ax2,
         )
         return fig, (ax1, ax2)
@@ -514,53 +514,93 @@ def make_fake_data_haha(data, fixed_error_range=0.21):
     return fake_points
 
 
+def show_two_FOV():
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+
+
+
+    # 讀取圖像
+    img1 = Image.open(    
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            f"..\\data\\uwb_exp\\ds4025ft.png",
+        ))
+    img2 = Image.open(    
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            f"..\\data\\uwb_exp\\ipt430m.png",
+        ))
+
+    # 創建子圖
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+
+    # 顯示第一個圖像
+    axs[0].imshow(img1)
+    axs[0].set_title("DS4025FT")
+    axs[0].axis("on")
+    axs[0].set_xlabel("X (pixels)")
+    axs[0].set_ylabel("Y (pixels)")
+
+    # 顯示第二個圖像
+    axs[1].imshow(img2)
+    axs[1].set_title("IPT430M")
+    axs[1].axis("on")
+    axs[1].set_xlabel("X (pixels)")
+    axs[1].set_ylabel("Y (pixels)")
+
+    # 顯示圖表
+    plt.show()
+
+
 def main():
 
-    # from points import (
-    #     dis_exp_distortion_predict_points,
-    #     dis_exp_distortion_real_points,
-    #     dis_exp_undistortion_predict_points,
-    #     dis_exp_undistortion_real_points,
-    # )
+    from points import (
+        dis_exp_distortion_predict_points,
+        dis_exp_distortion_real_points,
+        dis_exp_undistortion_predict_points,
+        dis_exp_undistortion_real_points,
+    )
 
 
-    # distortion_exp = DistortionExp(
-    #     dis_predict_points=dis_exp_distortion_predict_points,
-    #     dis_real_points=dis_exp_distortion_real_points,
-    #     undis_predict_points=dis_exp_undistortion_predict_points,
-    #     undis_real_points=dis_exp_undistortion_real_points,
-    # )
+    distortion_exp = DistortionExp(
+        dis_predict_points=dis_exp_distortion_predict_points,
+        dis_real_points=dis_exp_distortion_real_points,
+        undis_predict_points=dis_exp_undistortion_predict_points,
+        undis_real_points=dis_exp_undistortion_real_points,
+    )
 
-    # distortion_exp.calculate_error()
+    distortion_exp.calculate_error()
 
-    # distortion_exp.show_fig(
-    #     distortion_exp.plot_points_compare(
-    #         points1=distortion_exp.dis_real_points, 
-    #         points2=distortion_exp.dis_predict_points, 
-    #         title="Distortion Points",
-    #         x_label="x (meters)",
-    #         y_label="y (meters)",
-    #         points1_name="Real Points",
-    #         points2_name="Predicted Points",
-    #         x_range=(-1.5, 6),  # 設置 x 軸範圍
-    #         y_range=(-1.5, 6),  # 設置 y 軸範圍
-    #         fig_size=(9, 9),
-    #     ),
-    #     # # undistortion
-    #     distortion_exp.plot_points_compare(
-    #         points1=distortion_exp.undis_real_points, 
-    #         points2=distortion_exp.undis_predict_points, 
-    #         title="Undistortion Points",
-    #         x_label="x (meters)",
-    #         y_label="y (meters)",
-    #         points1_name="Real Points",
-    #         points2_name="Predicted Points",
-    #         x_range=(-1.5, 6),  # 設置 x 軸範圍
-    #         y_range=(-1.5, 6),  # 設置 y 軸範圍
-    #         fig_size=(9, 9),
-    #     ),
-    #     distortion_exp.plot_compare_distortion_and_undistortion(),
-    # )
+    distortion_exp.show_fig(
+        # distortion_exp.plot_points_compare(
+        #     points1=distortion_exp.dis_real_points, 
+        #     points2=distortion_exp.dis_predict_points, 
+        #     title="Distortion Points",
+        #     x_label="x (meters)",
+        #     y_label="y (meters)",
+        #     points1_name="Real Points",
+        #     points2_name="Predicted Points",
+        #     x_range=(-1.5, 6),  # 設置 x 軸範圍
+        #     y_range=(-1.5, 6),  # 設置 y 軸範圍
+        #     fig_size=(9, 9),
+        # ),
+        # # undistortion
+        # distortion_exp.plot_points_compare(
+        #     points1=distortion_exp.undis_real_points, 
+        #     points2=distortion_exp.undis_predict_points, 
+        #     title="Undistortion Points",
+        #     x_label="x (meters)",
+        #     y_label="y (meters)",
+        #     points1_name="Real Points",
+        #     points2_name="Predicted Points",
+        #     x_range=(-1.5, 6),  # 設置 x 軸範圍
+        #     y_range=(-1.5, 6),  # 設置 y 軸範圍
+        #     fig_size=(9, 9),
+        # ),
+        distortion_exp.plot_compare_distortion_and_undistortion(),
+    )
 
 
     # from points import (
@@ -592,9 +632,9 @@ def main():
     
 
 
-    calibration_result = CalibrationData(device="ds4025ft", exp_num=3)
-    calibration_result.show_calibration_data()
-    calibration_result.MeanReprojectionError2()
+    # calibration_result = CalibrationData(device="ds4025ft", exp_num=3)
+    # calibration_result.show_calibration_data()
+    # calibration_result.MeanReprojectionError2()
     # calibration_result.show_calibration_data()
     # coin2 = CalibrationData("ipt430m", exp_num=2)
     # coin2.MeanReprojectionError2()
@@ -607,4 +647,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    show_two_FOV()
