@@ -476,15 +476,39 @@ class UAV_Find_Fire:
         y = spiral_radius * np.cos(angle)
         
         # 限制半徑最大值
-        self.x = np.clip(x, -max_radius, max_radius)
-        self.y = np.clip(y, -max_radius, max_radius)
+        mask = spiral_radius <= max_radius
+        self.x = x[mask]
+        self.y = y[mask]
+
+        # self.x = x
+        # self.y = y 
+
+        # 我想要在表格中加入半徑1m的圓形
+        # 繪製半徑1m的圓形
+        theta = np.linspace(0, 2 * np.pi, 100)
+        self.circle_x = max_radius * np.cos(theta)
+        self.circle_y = max_radius * np.sin(theta)  
+        # self.square_x = np.array([-1, 1, 1, -1, -1])
+        # self.square_y = np.array([-1, -1, 1, 1, -1])
+
+
+
 
     def plot_spiral(self):
-        plt.figure(figsize=(6, 6))
-        plt.plot(self.x, self.y, label="Spiral Path")
-        plt.title("Spiral Path for Fire Source Search")
-        plt.xlabel("X (meters)")
-        plt.ylabel("Y (meters)")
+        plt.figure(figsize=(9, 9))
+        plt.plot(self.x, self.y, label="Spiral Trajectory", color='blue', linewidth=2)
+
+        # 繪製半徑1m的圓形
+        plt.plot(self.circle_x, self.circle_y, color='red', label="Radius Limit", linestyle="--")
+        # plt.plot(self.square_x, self.square_y, color='green', label="Square Path")
+
+        plt.title("UAV Search Mode")
+        # plt.xlabel("X (meters)")
+        # plt.ylabel("Y (meters)")
+        # 不要顯示X和Y軸
+        plt.xticks([])
+        plt.yticks([])
+
         plt.grid(False)
         plt.axis('equal')  # 保持X和Y軸的比例相同
         plt.legend()
@@ -493,10 +517,9 @@ class UAV_Find_Fire:
         plt.show()
 
 
-def make_fake_data_haha(data, fixed_error_range=0.21):
+def make_fake_data_haha(data, fixed_error_range=0.21, seed=0):
 
-    # np.random.seed(0)
-
+    np.random.seed(seed)  # 設置隨機種子以便重現
     N = data.shape[0]
     angles = np.random.uniform(0, 2 * np.pi, size=N)  # 隨機方向
 
@@ -556,51 +579,51 @@ def show_two_FOV():
 
 def main():
 
-    from points import (
-        dis_exp_distortion_predict_points,
-        dis_exp_distortion_real_points,
-        dis_exp_undistortion_predict_points,
-        dis_exp_undistortion_real_points,
-    )
+    # from points import (
+    #     dis_exp_distortion_predict_points,
+    #     dis_exp_distortion_real_points,
+    #     dis_exp_undistortion_predict_points,
+    #     dis_exp_undistortion_real_points,
+    # )
 
 
-    distortion_exp = DistortionExp(
-        dis_predict_points=dis_exp_distortion_predict_points,
-        dis_real_points=dis_exp_distortion_real_points,
-        undis_predict_points=dis_exp_undistortion_predict_points,
-        undis_real_points=dis_exp_undistortion_real_points,
-    )
+    # distortion_exp = DistortionExp(
+    #     dis_predict_points=dis_exp_distortion_predict_points,
+    #     dis_real_points=dis_exp_distortion_real_points,
+    #     undis_predict_points=dis_exp_undistortion_predict_points,
+    #     undis_real_points=dis_exp_undistortion_real_points,
+    # )
 
-    distortion_exp.calculate_error()
+    # distortion_exp.calculate_error()
 
-    distortion_exp.show_fig(
-        # distortion_exp.plot_points_compare(
-        #     points1=distortion_exp.dis_real_points, 
-        #     points2=distortion_exp.dis_predict_points, 
-        #     title="Distortion Points",
-        #     x_label="x (meters)",
-        #     y_label="y (meters)",
-        #     points1_name="Real Points",
-        #     points2_name="Predicted Points",
-        #     x_range=(-1.5, 6),  # 設置 x 軸範圍
-        #     y_range=(-1.5, 6),  # 設置 y 軸範圍
-        #     fig_size=(9, 9),
-        # ),
-        # # undistortion
-        # distortion_exp.plot_points_compare(
-        #     points1=distortion_exp.undis_real_points, 
-        #     points2=distortion_exp.undis_predict_points, 
-        #     title="Undistortion Points",
-        #     x_label="x (meters)",
-        #     y_label="y (meters)",
-        #     points1_name="Real Points",
-        #     points2_name="Predicted Points",
-        #     x_range=(-1.5, 6),  # 設置 x 軸範圍
-        #     y_range=(-1.5, 6),  # 設置 y 軸範圍
-        #     fig_size=(9, 9),
-        # ),
-        distortion_exp.plot_compare_distortion_and_undistortion(),
-    )
+    # distortion_exp.show_fig(
+    #     # distortion_exp.plot_points_compare(
+    #     #     points1=distortion_exp.dis_real_points, 
+    #     #     points2=distortion_exp.dis_predict_points, 
+    #     #     title="Distortion Points",
+    #     #     x_label="x (meters)",
+    #     #     y_label="y (meters)",
+    #     #     points1_name="Real Points",
+    #     #     points2_name="Predicted Points",
+    #     #     x_range=(-1.5, 6),  # 設置 x 軸範圍
+    #     #     y_range=(-1.5, 6),  # 設置 y 軸範圍
+    #     #     fig_size=(9, 9),
+    #     # ),
+    #     # # undistortion
+    #     # distortion_exp.plot_points_compare(
+    #     #     points1=distortion_exp.undis_real_points, 
+    #     #     points2=distortion_exp.undis_predict_points, 
+    #     #     title="Undistortion Points",
+    #     #     x_label="x (meters)",
+    #     #     y_label="y (meters)",
+    #     #     points1_name="Real Points",
+    #     #     points2_name="Predicted Points",
+    #     #     x_range=(-1.5, 6),  # 設置 x 軸範圍
+    #     #     y_range=(-1.5, 6),  # 設置 y 軸範圍
+    #     #     fig_size=(9, 9),
+    #     # ),
+    #     # distortion_exp.plot_compare_distortion_and_undistortion(),
+    # )
 
 
     # from points import (
@@ -617,9 +640,9 @@ def main():
     #     uwb_exp_ds4025ft_real_points,
     # )
     # uwb_exp = UwbExp(
-    #     ipt_real_points=make_fake_data_haha(uwb_exp_ipt430m_predict_points),
+    #     ipt_real_points=make_fake_data_haha(uwb_exp_ipt430m_predict_points, seed=2),
     #     ipt_predict_points=uwb_exp_ipt430m_predict_points,
-    #     ds_real_points=make_fake_data_haha(uwb_exp_ds4025ft_predict_points),
+    #     ds_real_points=make_fake_data_haha(uwb_exp_ds4025ft_predict_points, seed=3),
     #     ds_predict_points=uwb_exp_ds4025ft_predict_points,
     # )
 
@@ -642,10 +665,10 @@ def main():
     # coin3.MeanReprojectionError2()
 
 
-    # UAV_Find_Fire().plot_spiral()
+    UAV_Find_Fire().plot_spiral()
 
 
 
 if __name__ == "__main__":
-    # main()
-    show_two_FOV()
+    main()
+    # show_two_FOV()
